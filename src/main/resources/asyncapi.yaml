@@ -1,0 +1,60 @@
+asyncapi: '2.2.0'
+info:
+  title: Practical developer Kafka/Spring Boot example
+  version: '1.0.0'
+  description: |
+
+servers:
+  test:
+    url: localhost:9092
+    protocol: kafka
+    description: Test broker
+
+defaultContentType: application/json
+
+channels:
+  advice-topic:
+    description: The topic on which measured values may be produced and consumed.
+    parameters:
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
+    subscribe:
+      summary: Inform about environmental lighting conditions of a particular streetlight.
+      operationId: receiveLightMeasurement
+      message:
+        $ref: '#/components/messages/practicalAdvice'
+
+components:
+  messages:
+    practicalAdvice:
+      name: practicalAdvice
+      title: Practical Advice
+      summary: Generated practical advice
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/practicalAdvicePayload"
+
+  schemas:
+    practicalAdvicePayload:
+      type: object
+      properties:
+        identifier:
+          type: integer
+          description: The practical advice identifier
+        message:
+          type: string
+          description: The actual practical advice
+
+  parameters:
+    tld.topic-name:
+      description: The topic name of the advice topic.
+      schema:
+        type: string
+
+  operationTraits:
+    kafka:
+      bindings:
+        kafka:
+          groupId:
+            type: string
+            enum: ['tpd-loggers']
